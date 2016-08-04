@@ -1,5 +1,10 @@
-const express = require('express')
+import Express from 'express'
+import Webtask from 'webtask-tools'
 
-module.exports = function(cb) {
-  cb(null, 'hello, world!')
-};
+const App = new Express()
+
+App.get("*", (req, res) => {
+  res.send("<h1>Webtask + Babel + Express = <3</h1>")
+})
+
+export default Webtask.fromExpress(App)

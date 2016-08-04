@@ -49,6 +49,16 @@ const webpackConfig = fetchModules.then(externals => ({
   resolve: {
     modulesDirectories: ['src', 'node_modules'],
     extensions: ['', '.js']
+  },
+
+  module: {
+    loaders: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loaders: ['babel']
+      }
+    ]
   }
 }))
 
