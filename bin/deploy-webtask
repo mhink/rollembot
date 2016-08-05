@@ -1,0 +1,19 @@
+#! /usr/bin/env ruby
+
+require 'json'
+
+command = ["wt", "create"]
+
+File.open('secrets.json', 'r+') do |f|
+  hash = JSON.parse(f.read)
+
+  hash.each_pair do |name, value|
+    command << "--secret #{name}=\"#{value}\""
+  end
+end
+
+command << "--name roll_one_for_me"
+command << "./dist/roll_one_for_me.js"
+
+system(command.join(" "))
+
