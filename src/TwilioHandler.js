@@ -1,14 +1,26 @@
 import { TwimlResponse } from 'twilio'
-import { keys } from 'lodash'
+import { keys, map } from 'lodash'
+import RedditClient from 'RedditClient'
+import TableParser from 'TableParser'
 
 export default function(req, res, next) {
-  const wtCtx = req.webtaskContext
-  const smsText = wtCtx.body.Body
-  console.log("Running Twilio handler...")
-  const twimlResponse = new TwimlResponse()
+  const ctx = req.webtaskContext
+  const smsText = ctx.body.Body
 
-  twimlResponse.message("Hello from Twilio SMS 11: " + smsText)
+  const client = new RedditClient(ctx.secrets)
 
-  res.type('text/xml')
-  res.send(twimlResponse.toString())
+  client.searchSubreddit('BehindTheTables', smsText)
+    .then(searchResults => {
+      const text = searchResults[0].data.selftext
+      const parser = new TableParser(text)
+      return parser.parse()
+    })
+    .then(tables => map(tables, table => table.rollForValue()))
+    .then(rolls => rolls.join("\n"))
+    .then(message => {
+      const twimlResponse = new TwimlResponse()
+      twimlResponse.message(message)
+      res.type('text/xml')
+      res.send(twimlResponse.toString())
+    })
 }
