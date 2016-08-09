@@ -44,6 +44,9 @@ const webpackConfig = fetchModules.then(externals => ({
 
   plugins: [
     new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: { warnings: false }
+    })
   ],
 
   resolve: {
