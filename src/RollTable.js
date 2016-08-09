@@ -1,5 +1,7 @@
-const TABLE_HEADER_REGEXP = /^\W*\*\*d\d+\s*(.*)\*\*$/
-const TABLE_ENTRY_REGEXP  = /^\d+\.\s*(.*)$/
+import {
+  TABLE_HEADER_REGEXP,
+  TABLE_ENTRY_REGEXP  
+} from './constants.js'
 
 export default class RollTable {
   constructor(header) {
@@ -14,10 +16,14 @@ export default class RollTable {
   }
 
   rollForValue() {
-    const min = Math.ceil(1)
-    const max = Math.floor(this.values.length)
-    const ix = Math.floor(Math.random() * (max - min)) + min
-    return (this.header + " " + this.values[ix])
+    if(this.values.length > 0) {
+      const min = Math.ceil(1)
+      const max = Math.floor(this.values.length)
+      const ix = Math.floor(Math.random() * (max - min)) + min
+      return (this.header + " " + this.values[ix])
+    } else {
+      return ""
+    }
   }
 
   log() {

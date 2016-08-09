@@ -1,32 +1,49 @@
 import { map, forEach } from 'lodash'
 import RollTable from 'RollTable'
 
-const TABLE_HEADER_REGEXP = /^\W*\*\*d\d+\s*(.*)\*\*$/
-const TABLE_ENTRY_REGEXP  = /^\d+\.\s*(.*)$/
+import {
+  TABLE_HEADER_REGEXP,
+  TABLE_ENTRY_REGEXP  
+} from './constants.js'
 
 const isTableHeader = (line) => TABLE_HEADER_REGEXP.test(line)
 const isTableEntry  = (line) => TABLE_ENTRY_REGEXP.test(line)
 
 export default class TableParser {
-  constructor(selftext) {
-    this.lines        = selftext.split("\n")
+  constructor(term, tablePostData) {
+    this.data         = tablePostData
+    this.searchTerm   = term
+    this.lines        = this.data.selftext.split("\n")
     this.currentTable = null
     this.tables       = []
-
-    console.log(`TableParser with ${this.lines.length} lines`)
   }
 
   parse() {
+    console.log(`Parsing ${this.lines.length} lines for "${this.searchTerm}"...`)
     return new Promise((resolve, reject) => {
       try {
         for(let line of this.lines) {
           this.parseLine(line)
         }
-        resolve(this.tables)
+        console.log(`Finished parsing ${this.tables.length} tables.`)
+
+        if(this.tables.length > 0) {
+          resolve(this.tables)
+        }
+        else {
+          reject(this.errorMessage())
+        }
       } catch(err) {
-        reject(err)
+        console.error(err)
+        console.error(err.stack)
+        reject(this.errorMessage())
       }
     })
+  }
+
+  errorMessage() {
+    return `Aw, man! We found a table for ${this.searchTerm}, but we had `
+    + `trouble reading it. :( Try rolling it yourself at ${this.data.url}.`;
   }
 
   parseLine(line) {

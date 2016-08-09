@@ -17,12 +17,19 @@ export default class RedditClient {
       this.fetchAuthenticated(`/r/${subreddit}/search?q=${term}&restrict_sr=true`, {
         method: "GET",
       })
-      .catch(reject)
+      .catch(err => {
+        console.error("fetchAuthenticated failed with error:")
+        console.error(err)
+        reject("Something went wrong. :(")
+      })
       .then(json => {
         if(json.kind !== 'Listing') {
-          reject("Response from Search API didn't return a Listing type")
+          console.error("Search API 'kind' field was not a Listing:")
+          console.error(json)
+          reject("Something went wrong with Reddit... :(")
         } else if(json.data.children.length <= 0) {
-          reject(`0 hits for search term ${term}`)
+          console.error(`0 search results for term ${term}`)
+          reject(`Sorry, I could find any tables like "${term}"`)
         } else {
           const searchItems = json.data.children
           resolve(json.data.children)
@@ -57,7 +64,7 @@ export default class RedditClient {
 
     const clientHeaders = {
       'User-Agent':     USER_AGENT,
-      'Authorization':  "bearer " + this.token,
+      'Authorization':  this._tokenAuth()
     }
 
     if(fetchOpts.headers) {
@@ -104,6 +111,7 @@ export default class RedditClient {
   }
 
   _tokenAuth () {
+    return "bearer " + this.token
   }
 
   _basicAuth () {

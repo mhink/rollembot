@@ -5,7 +5,7 @@ import TwilioHandler from 'TwilioHandler'
 const App = new Express()
 
 App.get("/", (req, res) => {
-  res.send("Attempt 7")
+  res.send("Tuesday Attempt 3")
 })
 
 App.post('/twilio', TwilioHandler)
