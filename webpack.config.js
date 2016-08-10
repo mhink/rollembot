@@ -31,7 +31,7 @@ const webpackConfig = fetchModules.then(externals => ({
   node: false,
 
   entry: {
-    [pkg.name]: './main.js',
+    rollembot: './main.js',
   },
   externals, // result of fetchModules promise
 
