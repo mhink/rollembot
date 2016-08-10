@@ -29,7 +29,7 @@ export default class RedditClient {
           reject("Something went wrong with Reddit... :(")
         } else if(json.data.children.length <= 0) {
           console.error(`0 search results for term ${term}`)
-          reject(`Sorry, I could find any tables like "${term}"`)
+          reject(`Sorry, I couldn't find any tables like "${term}"`)
         } else {
           const searchItems = json.data.children
           resolve(json.data.children)
